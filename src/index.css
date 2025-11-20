@@ -1,0 +1,23 @@
+@import "tailwindcss";
+
+@font-face {
+  font-family: "Roboto";
+  src: url("./assets/fonts/Roboto-font.ttf") format("truetype");
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+@layer base {
+  body {
+    font-family: "Roboto", "Inter", system-ui, -apple-system, "Segoe UI",
+      "Helvetica Neue", Arial, sans-serif;
+  }
+  h2 {
+    font-weight: 600;
+    font-size: 1.7rem;
+  }
+  p {
+    font-family: "Roboto";
+  }
+}
