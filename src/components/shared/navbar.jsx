@@ -47,7 +47,7 @@ export default function Navbar() {
   const currentLang = lan.find((l) => l.lan === lang)
 
   return (
-    <nav className='flex justify-between items-center py-6 px-10'>
+    <nav className='container flex justify-between items-center py-6 mx-auto px-1 md:px-4'>
       <Link to='/'>
         <img className='w-28' src='/logo.svg' alt='KINK' />
       </Link>
