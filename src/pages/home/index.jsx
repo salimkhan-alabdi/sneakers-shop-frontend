@@ -1,5 +1,5 @@
-import NewArrivalSection from '@/components/new-arrivals/index.jsx'
-import PopularSection from '@/components/popular/index.jsx'
+import NewArrivalSection from '@/components/new-arrivals'
+import PopularSection from '@/components/popular'
 import HeroSlider from '@/features/hero-slider'
 import React from 'react'
 
