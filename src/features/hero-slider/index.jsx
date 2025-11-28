@@ -2,7 +2,7 @@ import React from "react"
 
 export default function HeroSlider() {
   return (
-    <div className='flex justify-center relative overflow-hidden'>
+    <div className='flex justify-center relative overflow-hidden py-4'>
       <img className='w-3xl' src='/heroimages/yeezy.png' alt='Yeezy' />
       <img
         className='absolute -z-1 w-4xl opacity-10 top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2'
