@@ -1,141 +1,262 @@
-// src/pages/ProductPage.jsx
 import { useParams } from 'react-router-dom'
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useCallback } from 'react'
 import { api } from '@/api'
 import Button from '@/components/button'
-import ProductCard from '@/components/product-card/index.jsx'
+import ProductCard from '@/components/product-card'
+import ProductGallery from '@/features/gallery'
+import { useLanguageStore } from '@/store/languageStore.js'
+import { translations } from '@/i18n/translations'
+import { useCartStore } from '@/store/cartStore.js'
+import { useFavoritesStore } from '@/store/favoritesStore'
 
 export default function ProductPage() {
-  const { id } = useParams()
+  // ✅ ИСПРАВЛЕНО: Получаем параметр из URL как `slug`
+  const { slug } = useParams()
+
   const [product, setProduct] = useState(null)
   const [related, setRelated] = useState([])
-
-  // ✅ Загружаем текущий товар
+  const [isGalleryOpen, setGalleryOpen] = useState(false)
+  const [selectedSize, setSelectedSize] = useState(null)
+  const { addItem } = useCartStore()
+  const { favorites, loadFavorites, toggleFavorite, isFavorite } =
+    useFavoritesStore()
+  const [loadingFavs, setLoadingFavs] = useState(true)
+  const fav = !loadingFavs && product ? isFavorite(product.id) : false
+  // при монтировании подгружаем избранное
   useEffect(() => {
-    if (!id) return
-
-    async function loadProduct() {
-      try {
-        const res = await api.get(`products/${id}/`)
-        setProduct(res.data)
-      } catch (err) {
-        console.error(err)
-      }
+    const fetchFavs = async () => {
+      await loadFavorites()
+      setLoadingFavs(false)
     }
+    fetchFavs()
+  }, [loadFavorites])
 
-    loadProduct()
-  }, [id])
+  const language = useLanguageStore((state) => state.language)
+  // --- I. Загрузка основного товара ---
+
+  const loadProduct = useCallback(async () => {
+    // Используем slug для проверки наличия
+    if (!slug) return
+
+    try {
+      // ✅ ИСПРАВЛЕНО: Запрос использует переменную `slug`
+      const res = await api.get(`products/${slug}/`)
+      setProduct(res.data)
+    } catch (err) {
+      console.error('Ошибка загрузки продукта:', err)
+      setProduct(null)
+    }
+  }, [slug]) // Зависимость обновлена на slug
 
   useEffect(() => {
-    if (!product) return
+    loadProduct()
+  }, [loadProduct])
 
-    loadRelated()
-  }, [product])
+  // --- II. Загрузка связанных товаров ---
 
-  async function loadRelated() {
+  // --- II. Загрузка других товаров (не текущий продукт) ---
+  const loadRelated = useCallback(async (currentProduct) => {
+    if (!currentProduct || !currentProduct.category) return
+
     try {
-      // ✅ Берём ВСЕ товары
       const res = await api.get('/products/')
+      const allProducts = Array.isArray(res.data)
+        ? res.data
+        : res.data.results || []
 
-      // ✅ Убираем:
-      // 1. текущий товар
-      // 2. ВСЮ его категорию
-      const filtered = res.data.filter(
+      // Исключаем текущий товар и товары из той же категории
+      const filtered = allProducts.filter(
         (item) =>
-          item.id !== product.id && item.category.slug !== product.category.slug
+          item.id !== currentProduct.id &&
+          item.category?.id !== currentProduct.category.id
       )
 
-      // ✅ Берём по 1 случайному товару из каждой категории
-      const randomFromEach = pickRandomFromEachCategory(filtered)
+      // Группируем по категориям
+      const byCategory = filtered.reduce((acc, item) => {
+        const catId = item.category?.id || 'unknown'
+        if (!acc[catId]) acc[catId] = []
+        acc[catId].push(item)
+        return acc
+      }, {})
 
-      setRelated(randomFromEach)
-    } catch (err) {
-      console.error(err)
-    }
-  }
-
-  function pickRandomFromEachCategory(products) {
-    const map = {}
-
-    products.forEach((p) => {
-      const slug = p.category.slug
-
-      if (!map[slug]) {
-        map[slug] = []
+      // Выбираем по одному товару из каждой категории случайно
+      const related = []
+      for (const catItems of Object.values(byCategory)) {
+        const randomItem = catItems[Math.floor(Math.random() * catItems.length)]
+        related.push(randomItem)
+        if (related.length >= 4) break // показываем максимум 4 товара
       }
 
-      map[slug].push(p)
-    })
+      setRelated(related)
+    } catch (err) {
+      console.error('Ошибка загрузки связанных товаров:', err)
+      setRelated([])
+    }
+  }, [])
 
-    return Object.values(map)
-      .map((arr) => arr[Math.floor(Math.random() * arr.length)])
-      .filter(Boolean)
+  useEffect(() => {
+    if (product) {
+      loadRelated(product)
+    }
+  }, [product, loadRelated])
+
+  // --- III. Обработчик добавления в корзину ---
+
+  const handleAddToCart = () => {
+    if (!selectedSize) {
+      alert('Пожалуйста, выберите размер!')
+      return
+    }
+
+    addItem(product.id, selectedSize, 1)
   }
+  // --- IV. Рендеринг ---
 
-  if (!product) return <p>Loading...</p>
+  if (!product)
+    return <p className='p-10 text-center'>Загрузка или товар не найден...</p>
 
   return (
     <div className='container mx-auto px-4 space-y-20'>
-      <div className='grid grid-flow-col justify-center items-center gap-0'>
+      <div className='grid grid-flow-col justify-center items-start gap-10 pt-10'>
+        {/* Левая колонка: Галерея и изображения */}
         <div className='flex flex-col w-[600px] items-center'>
-          <img
-            src={`http://127.0.0.1:8000/${product.images[0].image}`}
-            alt={product.name}
-            className='w-full max-w-xl h-96 object-contain'
-          />
-          <p className='underline text-sm'>Смотреть альбом</p>
+          {/* Основное изображение */}
+          {product.images?.[0]?.image && (
+            <img
+              src={product.images[0].image}
+              alt={product.name}
+              className='w-full max-w-xl h-96 object-contain'
+            />
+          )}
 
-          <div className='flex mt-6 text-sm justify-between w-[500px]'>
+          <button
+            onClick={() => setGalleryOpen(true)}
+            className='underline text-sm cursor-pointer mt-2'
+            disabled={!product.images || product.images.length === 0}
+          >
+            {translations[language]?.album} ({product.images?.length || 0})
+          </button>
+
+          {isGalleryOpen && (
+            <ProductGallery
+              images={product.images}
+              onClose={() => setGalleryOpen(false)}
+            />
+          )}
+
+          {/* Save to Favorites */}
+          <div className='flex mt-6 text-sm justify-between w-[500px] items-start'>
             <span>
-              <p className='font-semibold'>Все еще не решили?</p>
-              <p>
-                Добавьте этот элемент в список и легко вернитесь к нему позже.
-              </p>
+              <p className='font-semibold'>{translations[language]?.choose}</p>
+              <p>{translations[language]?.save}</p>
             </span>
-
-            <img className='size-8' src='/icons/save.svg' alt='save' />
+            <img
+              className='size-8 cursor-pointer active:scale-95 transition'
+              src={fav ? '/icons/saved.svg' : '/icons/save.svg'}
+              alt='save'
+              onClick={() => toggleFavorite(product)} // передаем весь объект
+            />
           </div>
         </div>
 
+        {/* Правая колонка: Детали продукта */}
         <div className='w-[500px] space-y-5'>
-          <h1 className='text-3xl font-medium break-word leading-12'>
-            {product.brand.name} {product.name}
-          </h1>
+          <div>
+            <p className='text-2xl text-gray-500'>
+              {product.brand?.name || 'Не указан'}
+            </p>
+            <h1 className='text-3xl font-medium break-word leading-12'>
+              {product.name}
+            </h1>
+          </div>
 
-          <p className='text-2xl'>
-            {Math.floor(product.price).toLocaleString()} сум
+          <p className='text-2xl font-bold'>
+            {Math.floor(Number(product.price)).toLocaleString()}{' '}
+            {translations[language]?.currency}
           </p>
 
           <div className='flex items-center gap-2'>
+            {/* Рендеринг звезд на основе рейтинга */}
             {Array.from({ length: 5 }).map((_, i) => (
-              <img className='size-6' key={i} src='/star.svg' alt='star' />
+              <img
+                className='size-6'
+                key={i}
+                src={
+                  i < Math.round(product.rating || 0)
+                    ? '/star.svg'
+                    : '/star.svg'
+                }
+                alt='star'
+              />
             ))}
             <span className='text-xs text-gray-400 ml-1'>
-              ({product.rating})
+              ({product.rating || 0})
             </span>
           </div>
 
-          <p className='flex flex-wrap gap-2'>
-            {product.sizes?.map((s) => (
-              <p
-                key={s.id}
-                className='size-14 bg-gray-100 flex items-center justify-center hover:bg-gray-200 cursor-pointer'
-              >
-                {s.size}
+          {/* Выбор размера */}
+          {product.sizes?.length > 0 && (
+            <>
+              <p className='text-lg font-semibold pt-4'>
+                {translations[language]?.size}{' '}
+                {selectedSize && (
+                  <span className='text-gray-600'>
+                    ({product.sizes.find((s) => s.id === selectedSize)?.size})
+                  </span>
+                )}
               </p>
-            ))}
-          </p>
 
-          <p className='text-xs underline'>Как измерить размер ноги?</p>
+              <div className='flex flex-wrap gap-2'>
+                {product.sizes.map((s) => {
+                  const isOut = s.stock === 0
+                  const isSelected = s.id === selectedSize
 
-          <Button>Добавить в корзину</Button>
+                  return (
+                    <div
+                      key={s.id}
+                      onClick={() => !isOut && setSelectedSize(s.id)}
+                      className={`
+              size-14 flex items-center justify-center border
+              ${
+                isOut
+                  ? 'bg-gray-50 text-gray-300 cursor-not-allowed line-through'
+                  : isSelected
+                  ? 'bg-gray-800 text-white border-gray-800 cursor-pointer'
+                  : 'bg-gray-100 hover:bg-gray-200 cursor-pointer border-gray-300'
+              }
+            `}
+                    >
+                      {s.size}
+                    </div>
+                  )
+                })}
+              </div>
+            </>
+          )}
+
+          {product.type === 'sneakers' && (
+            <p className='text-xs underline cursor-pointer'>
+              {translations[language]?.foot}
+            </p>
+          )}
+
+          <Button
+            onClick={handleAddToCart}
+            disabled={!selectedSize}
+            className={`w-full ${
+              !selectedSize ? 'opacity-50 cursor-not-allowed' : ''
+            }`}
+          >
+            {translations[language]?.cart}
+          </Button>
         </div>
       </div>
 
+      {/* Связанные товары */}
       {related.length > 0 && (
-        <div>
-          <h2 className='text-2xl font-semibold mb-6'>Завершить образ</h2>
-          <div className='grid grid-cols-4 gap-4'>
+        <div className='mt-24 container mx-auto max-w-7xl px-1 md:px-4'>
+          <h2 className='mb-6'>{translations[language].boughtBy}</h2>
+          <div className='grid grid-cols-2 sm:grid-cols-4 gap-4'>
             {related.map((item) => (
               <ProductCard key={item.id} product={item} />
             ))}

@@ -1,16 +1,26 @@
-import React from 'react'
 import { Link } from 'react-router-dom'
+import { translations } from '@/i18n/translations'
+import { useLanguageStore } from '@/store/languageStore'
+import { useLanguageNavigator } from '@/hooks/useLanguageNavigator'
 
 export default function Footer() {
+  const language = useLanguageStore((state) => state.language)
+
+  // хук, который следит за языком и обновляет URL
+  useLanguageNavigator()
+
+  const t = translations[language]
+
   return (
     <footer className='bg-black pt-16 pb-5 px-1 mt-12'>
       <div className='container grid grid-cols-3 mx-auto md:px-4 mb-10'>
+        {/* Логотип и способы оплаты */}
         <div>
-          <Link to='/'>
+          <Link to={`/${language}/`}>
             <img className='w-28' src='/logo.svg' alt='KINK' />
           </Link>
-          <div className='space-y-3 ml-2 mt-3'>
-            <div className='text-white'>К оплате принимаем:</div>
+          <div className='space-y-3 ml-2 mt-3 text-white'>
+            <div>{t.payMethod}</div>
             <div className='flex gap-3'>
               <img className='w-7 h-7' src='/click.png' alt='click' />
               <img className='w-7 h-7' src='/payme.png' alt='payme' />
@@ -19,56 +29,50 @@ export default function Footer() {
             </div>
           </div>
         </div>
+
+        {/* Ссылки */}
         <ul className='text-white space-y-5 text-sm'>
           <li>
-            <Link to='/about'>О KINK</Link>
+            <Link to={`/${language}/about`}>{t.about}</Link>
           </li>
           <li>
-            <Link to='/events'>События</Link>
+            <Link to={`/${language}/events`}>{t.events}</Link>
           </li>
           <li>
-            <Link to='/delivery'>Доставка</Link>
+            <Link to={`/${language}/delivery`}>{t.delivery}</Link>
           </li>
           <li>
-            <Link to='/contact'>Контакты</Link>
-          </li>
-          <li className='flex gap-3'>
-            <img className='w-7 h-7' src='/icons/facebook.svg' alt='facebook' />
-            <img
-              className='w-7 h-7'
-              src='/icons/instagram.svg'
-              alt='instagram'
-            />
-            <img className='w-7 h-7' src='/icons/telegram.svg' alt='telegram' />
+            <Link to={`/${language}/contact`}>{t.contact}</Link>
           </li>
         </ul>
+
+        {/* Контакты */}
         <ul className='text-white text-sm space-y-5'>
           <li className='space-y-2'>
             <span className='flex -ml-6 gap-1'>
               <img className='w-4' src='/icons/location.svg' alt='location' />
-              <h5 className='font-semibold'>Адрес</h5>
+              <h5 className='font-semibold'>{t.address_name}</h5>
             </span>
-            <p className='font-light'>ул.Паркент 283</p>
+            <p className='font-light'>{t.address}</p>
           </li>
           <li className='space-y-2'>
             <span className='flex -ml-6 gap-1'>
               <img className='w-4' src='/icons/calendar.svg' alt='calendar' />
-              <h5 className='font-semibold'>График</h5>
+              <h5 className='font-semibold'>{t.schedule_name}</h5>
             </span>
-            <p className='font-light'>Работаем без выходных с 11:00 до 21:00</p>
+            <p className='font-light'>{t.schedule}</p>
           </li>
           <li className='space-y-2'>
             <span className='flex -ml-6 gap-1'>
               <img className='w-4' src='/icons/call.svg' alt='call' />
-              <h5 className='font-semibold'>Телефон</h5>
+              <h5 className='font-semibold'>{t.phone_name}</h5>
             </span>
             <p className='font-light'>(+998) 90 924 87 61</p>
           </li>
         </ul>
       </div>
-      <p className='flex justify-center text-white text-xs'>
-        Copyright © 2025 KINK. Все права защищены.
-      </p>
+
+      <p className='flex justify-center text-white text-xs'>{t.copyright}</p>
     </footer>
   )
 }

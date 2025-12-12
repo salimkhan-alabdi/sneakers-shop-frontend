@@ -1,33 +1,37 @@
 import { useEffect, useState } from 'react'
 import Button from '@/components/button'
+import { useLanguageStore } from '@/store/languageStore'
+import { translations } from '@/i18n/translations'
 
 export default function Filters({ onFilter, options }) {
-  // Получаем materials из опций
+  const language = useLanguageStore((state) => state.language)
+  const t = translations[language]?.filters
+
   const { brands = [], sizes = [], materials = [], colors = [] } = options
 
   const [filters, setFilters] = useState({
     gender: [],
     brand: [],
     size: [],
-    material: [], // Добавлено состояние для материала
+    material: [],
     color_hex: [],
     minPrice: '',
     maxPrice: '',
   })
 
-  // Отправляем изменения наверх
   useEffect(() => {
     onFilter(filters)
   }, [filters])
 
   const toggleFilter = (field, value) => {
     setFilters((prev) => {
-      const currentList = prev[field]
-      const newList = currentList.includes(value)
-        ? currentList.filter((item) => item !== value)
-        : [...currentList, value]
-
-      return { ...prev, [field]: newList }
+      const list = prev[field]
+      return {
+        ...prev,
+        [field]: list.includes(value)
+          ? list.filter((v) => v !== value)
+          : [...list, value],
+      }
     })
   }
 
@@ -50,14 +54,15 @@ export default function Filters({ onFilter, options }) {
 
   return (
     <div className='bg-white p-5 space-y-6'>
-      {/* --- ЦЕНА --- */}
+      {/* --- PRICE --- */}
       <div>
-        <h3 className='font-bold text-gray-900 mb-3'>Цена</h3>
+        <h3 className='font-bold text-gray-900 mb-3'>{t.price}</h3>
+
         <div className='flex gap-2 items-center'>
           <input
             type='number'
             name='minPrice'
-            placeholder='От'
+            placeholder={t.minPrice}
             className='w-full border border-gray-300 rounded px-2 py-1.5 text-sm focus:border-black outline-none'
             value={filters.minPrice}
             onChange={handlePriceChange}
@@ -66,7 +71,7 @@ export default function Filters({ onFilter, options }) {
           <input
             type='number'
             name='maxPrice'
-            placeholder='До'
+            placeholder={t.maxPrice}
             className='w-full border border-gray-300 rounded px-2 py-1.5 text-sm focus:border-black outline-none'
             value={filters.maxPrice}
             onChange={handlePriceChange}
@@ -76,35 +81,38 @@ export default function Filters({ onFilter, options }) {
 
       <hr className='border-gray-100' />
 
-      {/* --- ПОЛ --- */}
+      {/* --- GENDER --- */}
       <div>
-        <h3 className='font-bold text-gray-900 mb-3'>Пол</h3>
+        <h3 className='font-bold text-gray-900 mb-3'>{t.gender}</h3>
         <div className='space-y-2'>
-          {['male', 'female'].map((g) => (
-            <label
-              key={g}
-              className='flex items-center gap-2 cursor-pointer hover:text-gray-600'
-            >
-              <input
-                type='checkbox'
-                className='border-gray-300 text-black focus:ring-black accent-black'
-                checked={filters.gender.includes(g)}
-                onChange={() => toggleFilter('gender', g)}
-              />
-              <span className='text-sm'>
-                {g === 'male' ? 'Мужской' : 'Женский'}
-              </span>
-            </label>
-          ))}
+          <label className='flex items-center gap-2 cursor-pointer hover:text-gray-600'>
+            <input
+              type='checkbox'
+              checked={filters.gender.includes('male')}
+              onChange={() => toggleFilter('gender', 'male')}
+              className='accent-black'
+            />
+            <span className='text-sm'>{t.men}</span>
+          </label>
+
+          <label className='flex items-center gap-2 cursor-pointer hover:text-gray-600'>
+            <input
+              type='checkbox'
+              checked={filters.gender.includes('female')}
+              onChange={() => toggleFilter('gender', 'female')}
+              className='accent-black'
+            />
+            <span className='text-sm'>{t.women}</span>
+          </label>
         </div>
       </div>
 
       <hr className='border-gray-100' />
 
-      {/* --- БРЕНД --- */}
+      {/* --- BRAND --- */}
       {brands.length > 0 && (
         <div>
-          <h3 className='font-bold text-gray-900 mb-3'>Бренд</h3>
+          <h3 className='font-bold text-gray-900 mb-3'>{t.brand}</h3>
           <div className='max-h-40 overflow-y-auto space-y-2 pr-2 custom-scrollbar'>
             {brands.map((brand) => (
               <label
@@ -113,9 +121,9 @@ export default function Filters({ onFilter, options }) {
               >
                 <input
                   type='checkbox'
-                  className='rounded border-gray-300 text-black focus:ring-black accent-black'
                   checked={filters.brand.includes(brand.id)}
                   onChange={() => toggleFilter('brand', brand.id)}
+                  className='accent-black'
                 />
                 <span className='text-sm'>{brand.name}</span>
               </label>
@@ -124,25 +132,20 @@ export default function Filters({ onFilter, options }) {
         </div>
       )}
 
-      {/* --- РАЗМЕР --- */}
+      {/* --- SIZE --- */}
       {sizes.length > 0 && (
         <div>
-          <h3 className='font-bold text-gray-900 mb-3'>Размер</h3>
+          <h3 className='font-bold text-gray-900 mb-3'>{t.size}</h3>
+
           <div className='flex flex-wrap gap-2'>
             {sizes.map((size) => {
-              const isActive = filters.size.includes(size)
+              const active = filters.size.includes(size)
               return (
                 <div
                   key={size}
                   onClick={() => toggleFilter('size', size)}
-                  className={`
-                    size-8 flex justify-center items-center
-                    text-xs cursor-pointer transition-colors
-                    ${
-                      isActive
-                        ? 'bg-gray-200 text-black'
-                        : 'bg-gray-50 text-black hover:bg-gray-100'
-                    }
+                  className={`size-8 flex justify-center items-center text-xs cursor-pointer 
+                    ${active ? 'bg-gray-200' : 'bg-gray-50 hover:bg-gray-100'}
                   `}
                 >
                   {size}
@@ -153,13 +156,14 @@ export default function Filters({ onFilter, options }) {
         </div>
       )}
 
-      {/* --- МАТЕРИАЛ (НОВОЕ) --- */}
+      {/* --- MATERIAL --- */}
       {materials.length > 0 && (
         <>
           <hr className='border-gray-100' />
           <div>
-            <h3 className='font-bold text-gray-900 mb-3'>Материал</h3>
-            <div className='space-y-2 max-h-40 overflow-y-auto custom-scrollbar'>
+            <h3 className='font-bold text-gray-900 mb-3'>{t.material}</h3>
+
+            <div className='max-h-40 overflow-y-auto space-y-2 custom-scrollbar'>
               {materials.map((m) => (
                 <label
                   key={m}
@@ -167,11 +171,13 @@ export default function Filters({ onFilter, options }) {
                 >
                   <input
                     type='checkbox'
-                    className='border-gray-300 text-black focus:ring-black accent-black'
                     checked={filters.material.includes(m)}
                     onChange={() => toggleFilter('material', m)}
+                    className='accent-black'
                   />
-                  <span className='text-sm capitalize'>{m}</span>
+                  <span className='text-sm capitalize'>
+                    {translations[language]?.filters?.materialsList?.[m] || m}
+                  </span>
                 </label>
               ))}
             </div>
@@ -179,24 +185,25 @@ export default function Filters({ onFilter, options }) {
         </>
       )}
 
-      {/* --- ЦВЕТ --- */}
+      {/* --- COLOR --- */}
       {colors.length > 0 && (
         <>
           <hr className='border-gray-100' />
           <div>
-            <h3 className='font-bold text-gray-900 mb-3'>Цвет</h3>
-            <div className='flex gap-2 flex-wrap'>
+            <h3 className='font-bold text-gray-900 mb-3'>{t.color}</h3>
+            <div className='flex flex-wrap gap-2'>
               {colors.map((c) => (
                 <button
                   key={c}
                   onClick={() => toggleFilter('color_hex', c)}
-                  className={`w-6 h-6 border  transition-transform hover:scale-110 ${
-                    filters.color_hex.includes(c)
-                      ? 'ring-1 ring-offset-1 ring-black scale-110'
-                      : 'border-gray-200'
-                  }`}
+                  className={`w-6 h-6 border transition 
+                    ${
+                      filters.color_hex.includes(c)
+                        ? 'ring-1 ring-black scale-110'
+                        : 'border-gray-300 hover:scale-110'
+                    }
+                  `}
                   style={{ backgroundColor: c }}
-                  title={c}
                 />
               ))}
             </div>
@@ -204,11 +211,12 @@ export default function Filters({ onFilter, options }) {
         </>
       )}
 
+      {/* RESET */}
       <Button
         onClick={resetFilters}
-        className='w-full bg-gray-200 text-black hover:bg-gray-300 mt-4'
+        className='w-full bg-gray-200 hover:bg-gray-300 text-black mt-4'
       >
-        Сбросить все
+        {t.reset}
       </Button>
     </div>
   )

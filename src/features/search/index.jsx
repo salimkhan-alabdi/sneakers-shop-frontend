@@ -44,7 +44,7 @@ export default function SearchProducts({ onClose }) {
         placeholder='Поиск...'
         value={query}
         onChange={(e) => setQuery(e.target.value)}
-        className='border-2 p-2 w-full outline-none'
+        className='border-2 p-2 w-full outline-none bg-white'
       />
 
       {loading && <p className='text-sm p-2'>Загрузка...</p>}
