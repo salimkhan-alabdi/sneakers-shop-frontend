@@ -6,10 +6,11 @@ import { Link, useNavigate, useLocation } from 'react-router-dom'
 import SearchProducts from '@/features/search/index.jsx'
 import { translations } from '@/i18n/translations'
 import { useLanguageStore } from '@/store/languageStore'
-import { instance } from '@/api/axios'
+import { instance } from '@/api/axios.js'
 import { useCartStore } from '@/store/cartStore'
 import Button from '@/components/button/index.jsx'
 import { useFavoritesStore } from '@/store/favoritesStore.js'
+import { api } from '@/api/index.js'
 
 const LANG_ICONS = {
   uz: '/icons/uz_lan.svg',
@@ -31,9 +32,12 @@ export default function Navbar() {
 
   const [availableLanguages] = useState(['uz', 'ru', 'en'])
   const [openMenu, setOpenMenu] = useState(null)
+  const [openBrand, setBrand] = useState(null)
   const menuRef = useRef(null)
   const navigate = useNavigate()
   const location = useLocation()
+  const brandsRef = useRef(null)
+  const [brands, setBrands] = useState([])
   const { favorites, loadFavorites } = useFavoritesStore()
 
   const favoritesCount = favorites.length
@@ -60,16 +64,6 @@ export default function Navbar() {
       loadFavorites()
     }
   }, [token])
-
-  useEffect(() => {
-    const handleClickOutside = (e) => {
-      if (menuRef.current && !menuRef.current.contains(e.target)) {
-        setOpenMenu(null)
-      }
-    }
-    document.addEventListener('mousedown', handleClickOutside)
-    return () => document.removeEventListener('mousedown', handleClickOutside)
-  }, [])
 
   const handleToggle = (type) => setOpenMenu(openMenu === type ? null : type)
 
@@ -105,28 +99,93 @@ export default function Navbar() {
     { label: translations[language].women, href: '/womens' },
     { label: translations[language].brands, href: null },
   ]
+  useEffect(() => {
+    // Получаем бренды с бекенда
+    const fetchBrands = async () => {
+      try {
+        const res = await api.get('brands/') // замените на ваш эндпоинт
+        setBrands(res.data)
+        console.log(
+          'Brands slugs:',
+          res.data.map((brand) => brand.slug)
+        )
+        console.log(
+          'Brands fdaasda:',
+          brands.map((b) => ({ id: b.id, name: b.name, slug: b.slug }))
+        )
+      } catch (err) {
+        console.error('Ошибка загрузки брендов:', err)
+      }
+    }
+    fetchBrands()
+  }, [])
 
   return (
-    <nav className='container flex justify-between items-center py-6 mx-auto px-4'>
+    <nav className='container flex justify-between items-center py-6 mx-auto px-4 flex-1'>
       <Link to={`/${language}/`}>
         <img className='w-28' src='/logo.svg' alt='KINK' />
       </Link>
 
       <ul className='hidden gap-10 font-bold text-md tracking-wider md:flex'>
-        {links.map((link) => (
-          <li key={link.label}>
-            {link.href ? (
+        {links.map((link) =>
+          link.href ? (
+            <li key={link.label}>
               <Link
                 to={`/${language}${link.href}`}
-                onClick={() => setOpenMenu(null)}
+                className='hover:text-gray-500 transition-colors'
               >
                 {link.label}
               </Link>
-            ) : (
-              <span>{link.label}</span>
-            )}
-          </li>
-        ))}
+            </li>
+          ) : (
+            <li
+              key={link.label}
+              className='relative group'
+              onMouseEnter={() => setOpenMenu('brands')}
+              onMouseLeave={() => setOpenMenu(null)}
+            >
+              <span
+                className={`cursor-pointer transition-colors ${
+                  openMenu === 'brands' ? 'text-gray-400' : ''
+                }`}
+              >
+                {link.label}
+              </span>
+
+              {/* Выпадающее меню */}
+              <div
+                className={`
+      absolute top-full left-0 mt-2 z-50
+      transition-all duration-300 ease-in-out
+      ${
+        openMenu === 'brands'
+          ? 'opacity-100 visible translate-y-0'
+          : 'opacity-0 invisible translate-y-2'
+      }
+    `}
+              >
+                <div className='bg-white border shadow-xl w-72 max-h-96 overflow-y-auto p-4 grid grid-cols-2 md:grid-cols-3 gap-4'>
+                  {brands.length === 0 ? (
+                    <p className='col-span-3 text-center text-gray-400'>
+                      Загрузка...
+                    </p>
+                  ) : (
+                    brands.map((brand) => (
+                      <Link
+                        key={brand.id}
+                        to={`/${language}/brand/${brand.slug}`}
+                        className='hover:text-black text-gray-600 hover:translate-x-1 transition-all block text-sm font-medium'
+                        onClick={() => setOpenMenu(null)}
+                      >
+                        {brand.slug}
+                      </Link>
+                    ))
+                  )}
+                </div>
+              </div>
+            </li>
+          )
+        )}
       </ul>
 
       <div className='flex items-center gap-4 relative' ref={menuRef}>
@@ -258,12 +317,15 @@ export default function Navbar() {
             <span className='flex gap-3 items-center'>
               <img
                 className='size-8 cursor-pointer active:scale-95 transition'
-                src='/icons/save.svg'
+                src='/icons/save2.svg'
                 alt='save'
               />
 
               <p
-                onClick={() => navigate(`/${language}/favorites`)}
+                onClick={() => {
+                  navigate(`/${language}/favorites`)
+                  setOpenMenu(null)
+                }}
                 className='text-sm underline cursor-pointer flex items-center gap-2'
               >
                 Сохраненные товары
@@ -273,9 +335,30 @@ export default function Navbar() {
               </p>
             </span>
 
+            <span className='flex gap-3 items-center border-t pt-3'>
+              <img
+                className='size-8 cursor-pointer active:scale-95 transition'
+                src='/icons/box.svg'
+                alt='save'
+              />
+
+              <p
+                onClick={() => {
+                  navigate(`/${language}/order`)
+                  setOpenMenu(null)
+                }}
+                className='text-sm underline cursor-pointer flex items-center gap-2'
+              >
+                Заказы
+              </p>
+            </span>
+
             {items.length > 0 && (
               <Button
-                onClick={() => navigate(`/${language}/cart`)}
+                onClick={() => {
+                  navigate(`/${language}/cart`)
+                  setOpenMenu(null)
+                }}
                 className='mt-2 py-2 bg-black text-white w-full'
               >
                 Открыть корзину

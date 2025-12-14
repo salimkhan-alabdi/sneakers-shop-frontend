@@ -17,6 +17,11 @@ import NotFoundPage from '@/pages/notfound'
 import { ProtectedRoutes } from '@/components/auth/protectedRoutes.jsx'
 import CartPage from '@/pages/cart/index.jsx'
 import FavoritesPage from '@/pages/favorites/index.jsx'
+import Order from '@/pages/order/index.jsx'
+import OrderPage from '@/pages/order/index.jsx'
+import BrandsPage from '@/pages/brands/index.jsx'
+import OrderList from '@/pages/orders/index.jsx'
+import OrderDetails from '@/pages/order-details/index.jsx'
 
 // router.jsx (ИСПРАВЛЕНО - ПУБЛИЧНЫЙ БЛОК)
 const router = createBrowserRouter([
@@ -35,6 +40,7 @@ const router = createBrowserRouter([
       { path: 'delivery', element: <DeliveryPage /> },
       { path: 'new-arrival', element: <NewArrival /> },
       { path: 'category/:slug', element: <CategoryPage /> },
+      { path: 'brand/:slug', element: <BrandsPage /> },
       {
         element: <ProtectedRoutes />, // <-- ProtectedRoutes теперь просто обертка
         children: [
@@ -42,6 +48,9 @@ const router = createBrowserRouter([
           { path: 'profile', element: <ProfilePage /> },
           { path: 'cart', element: <CartPage /> },
           { path: 'favorites', element: <FavoritesPage /> },
+          { path: 'order', element: <OrderPage /> },
+          { path: 'orders', element: <OrderList /> },
+          { path: 'orders/:id', element: <OrderDetails /> },
         ],
       },
 

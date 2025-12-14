@@ -1,9 +1,11 @@
 import { useEffect } from 'react'
 import { useCartStore } from '@/store/cartStore.js'
 import Button from '@/components/button/index.jsx'
+import { useNavigate } from 'react-router-dom'
 
 function Cart() {
   const { items, fetchCart, updateItem, removeItem, clearCart } = useCartStore()
+  const navigate = useNavigate()
 
   useEffect(() => {
     fetchCart()
@@ -13,6 +15,10 @@ function Cart() {
     (total, item) => total + parseFloat(item.product.price) * item.quantity,
     0
   )
+
+  const handleCheckout = () => {
+    navigate('/order') // <-- переход на страницу order
+  }
 
   return (
     <div className='max-w-4xl mx-auto p-6'>
@@ -103,7 +109,10 @@ function Cart() {
             Очистить корзину
           </button>
 
-          <Button className='w-full py-2 bg-black text-white rounded hover:bg-gray-900 mt-2'>
+          <Button
+            onClick={handleCheckout}
+            className='w-full py-2 bg-black text-white rounded hover:bg-gray-900 mt-2'
+          >
             Оформить заказ
           </Button>
         </div>

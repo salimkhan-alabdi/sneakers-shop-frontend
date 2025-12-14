@@ -13,8 +13,6 @@ export default function CategoriesList() {
     async function loadCategories() {
       try {
         const response = await api.get('categories/')
-        console.log('API cat:', response.data)
-        console.log('API cat:', response.data)
 
         setCategories(response.data)
       } catch (error) {
