@@ -33,10 +33,7 @@ export default function CategoriesList() {
               style={{ backgroundColor: colors[i % colors.length] }}
             >
               <div className="w-40">
-                <img
-                  className="object-contain"
-                  src={`${import.meta.env.VITE_API_URL}${category.image}`}
-                />
+                <img className="object-contain" src={category.image} />
               </div>
             </div>
           </Link>
