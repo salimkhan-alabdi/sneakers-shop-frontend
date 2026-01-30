@@ -19,7 +19,7 @@ export default function Footer() {
           </Link>
           <div className="space-y-3 ml-2 mt-3 text-white">
             <div>{t.payMethod}</div>
-            <div className="flex gap-3">
+            <div className="gap-3 grid grid-cols-2 sm:grid-cols-4 w-20 sm:w-fit">
               <img className="w-7 h-7" src="/click.png" alt="click" />
               <img className="w-7 h-7" src="/payme.png" alt="payme" />
               <img className="w-7 h-7" src="/icons/card.svg" alt="card" />
