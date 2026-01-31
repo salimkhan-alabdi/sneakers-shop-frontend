@@ -1,5 +1,5 @@
 import ProductCard from "@/components/product-card";
-import ProductCardSkeleton from "@/components/PproductCardSkeleton";
+import ProductCardSkeleton from "@/components/ProductCardSkeleton";
 import { useProducts } from "@/hooks/useProducts"; // Импорт хука
 import { useLanguageStore } from "@/store/languageStore.js";
 import { translations } from "@/i18n/translations";

@@ -49,7 +49,7 @@ export default function ProductCard({ product }) {
             </span>
           </div>
 
-          <div className="mt-auto flex justify-between items-end border-t pt-2 border-dashed border-gray-100">
+          <div className="mt-auto flex flex-col sm:flex-row justify-between items-end border-t pt-2 border-dashed border-gray-100">
             <span className="text-lg font-bold text-gray-900">
               {Math.floor(product.price).toLocaleString()}{" "}
               <span className="text-xs font-normal text-gray-500">

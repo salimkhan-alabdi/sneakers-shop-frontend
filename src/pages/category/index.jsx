@@ -1,7 +1,7 @@
 import { useEffect, useState, useMemo, useCallback } from "react";
 import { useParams } from "react-router-dom";
 import ProductCard from "@/components/product-card";
-import ProductCardSkeleton from "@/components/PproductCardSkeleton";
+import ProductCardSkeleton from "@/components/ProductCardSkeleton";
 import Filters from "@/components/filter";
 import { instance } from "@/api/axios.js";
 

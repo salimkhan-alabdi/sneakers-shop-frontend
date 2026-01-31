@@ -99,24 +99,18 @@ export default function ProductPage() {
     addItem(product.id, selectedSize, 1);
   };
 
-  if (!product)
-    return <p className="p-10 text-center">Загрузка или товар не найден...</p>;
+  if (!product) return <p className="p-10 text-center">Загрузка...</p>;
 
   return (
     <div className="container mx-auto px-4 space-y-10 md:space-y-20">
-      {/* БЫЛО: grid-flow-col justify-center gap-10 pt-10
-          СТАЛО: grid-cols-1 (одна колонка для мобилок) и lg:grid-cols-2 (две для десктопа)
-      */}
       <div className="grid grid-cols-1 lg:grid-cols-2 justify-center items-start gap-10 pt-10">
-        {/* БЫЛО: w-[600px]
-            СТАЛО: w-full max-w-[600px] и mx-auto, чтобы на мобилках не вылезало за экран
-        */}
         <div className="flex flex-col w-full max-w-[600px] items-center mx-auto">
           {product.images?.[0]?.image && (
             <img
+              onClick={() => setGalleryOpen(true)}
               src={product.images[0].image}
               alt={product.name}
-              className="w-full max-w-xl h-64 md:h-96 object-contain"
+              className="w-full max-w-xl h-64 md:h-96 object-contain cursor-pointer"
             />
           )}
 
@@ -135,7 +129,6 @@ export default function ProductPage() {
             />
           )}
 
-          {/* БЫЛО: w-[500px], СТАЛО: w-full max-w-[500px] */}
           <div className="flex mt-6 text-sm justify-between w-full max-w-[500px] items-start">
             <span>
               <p className="font-semibold">{translations[language]?.choose}</p>
@@ -150,9 +143,6 @@ export default function ProductPage() {
           </div>
         </div>
 
-        {/* БЫЛО: w-[500px]
-            СТАЛО: w-full max-w-[500px] mx-auto
-        */}
         <div className="w-full max-w-[500px] space-y-5 mx-auto">
           <div>
             <p className="text-2xl text-gray-500">

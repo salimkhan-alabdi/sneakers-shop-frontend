@@ -5,7 +5,7 @@ import Filters from "@/components/filter";
 import { instance } from "@/api/axios.js";
 import { useLanguageStore } from "@/store/languageStore";
 import { translations } from "@/i18n/translations";
-import ProductCardSkeleton from "@/components/PproductCardSkeleton";
+import ProductCardSkeleton from "@/components/ProductCardSkeleton";
 
 export default function BrandPage() {
   const { slug } = useParams();

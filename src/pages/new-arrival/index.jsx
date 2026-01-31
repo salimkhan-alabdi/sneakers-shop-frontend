@@ -1,7 +1,7 @@
 import ProductCard from "@/components/product-card";
 import { useLanguageStore } from "@/store/languageStore.js";
 import { translations } from "@/i18n/translations";
-import ProductCardSkeleton from "@/components/PproductCardSkeleton";
+import ProductCardSkeleton from "@/components/ProductCardSkeleton";
 import { useProducts } from "@/hooks/useProducts";
 
 export default function NewArrival() {
