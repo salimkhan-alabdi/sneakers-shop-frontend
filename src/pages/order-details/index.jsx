@@ -99,7 +99,7 @@ export default function OrderDetails() {
               className="flex items-center gap-4 border p-4 rounded"
             >
               <img
-                src={`${import.meta.env.VITE_API_URL}${mainImage}`}
+                src={mainImage}
                 alt={item.product.name}
                 className="w-20 h-20 object-contain"
               />

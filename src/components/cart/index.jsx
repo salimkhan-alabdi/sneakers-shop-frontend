@@ -51,9 +51,7 @@ function Cart() {
             const handleDecrease = () => {
               updateItem(item.id, Math.max(item.quantity - 1, 1));
             };
-            console.log("sizeLabel:", sizeLabel);
-            console.log("stock:", sizeLabel?.stock);
-            console.log("item.quantity:", item.quantity);
+
             return (
               <div
                 key={item.id}
@@ -61,7 +59,7 @@ function Cart() {
               >
                 <div className="flex items-center gap-4">
                   <img
-                    src={`${import.meta.env.VITE_API_URL}${mainImage}`}
+                    src={mainImage}
                     alt={item.product.name}
                     className="w-20 h-20 object-contain"
                   />

@@ -37,7 +37,7 @@ export default function SearchProducts({ onClose }) {
   }, [query]);
 
   return (
-    <div className="w-60 sm:w-96">
+    <div className="w-72 sm:w-96">
       <input
         ref={inputRef}
         type="text"

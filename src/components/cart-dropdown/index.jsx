@@ -15,7 +15,7 @@ export const CartDropdown = ({
         {items.slice(0, 3).map((item) => (
           <div key={item.id} className="flex items-center gap-3 border-b pb-4">
             <img
-              src={`http://127.0.0.1:8000/${item.product.images[0]?.image}`}
+              src={item.product.images?.find((img) => img.is_main)?.image || item.product.images?.[0]?.image || "/placeholder.png"}
               alt={item.product.name}
               className="w-16 h-16 object-contain"
             />

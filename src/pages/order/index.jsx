@@ -170,7 +170,7 @@ export default function OrderPage() {
               >
                 <div className="flex items-center gap-4">
                   <img
-                    src={`${import.meta.env.VITE_API_URL}${mainImage}`}
+                    src={mainImage}
                     alt={item.product.name}
                     className="w-16 h-16 object-contain"
                   />
