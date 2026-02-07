@@ -48,7 +48,7 @@
 1. Клонировать репозиторий:
 
    ```bash
-   git clone [https://github.com/salimkhan-alabdi/sneakers-shop-frontend.git](https://github.com/salimkhan-alabdi/sneakers-shop-frontend.git)
+   git clone https://github.com/salimkhan-alabdi/sneakers-shop-frontend.git
    ```
 
    ```bash
