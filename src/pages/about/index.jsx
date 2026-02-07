@@ -1,6 +1,10 @@
+import { translations } from "@/i18n/translations";
+import { useLanguageStore } from "@/store/languageStore";
 import React from "react";
 
 export default function AboutPage() {
+  const language = useLanguageStore((state) => state.language);
+  const t = translations[language];
   const brands = [
     "Reebok",
     "Adidas",
@@ -16,7 +20,7 @@ export default function AboutPage() {
   return (
     <div className="container mx-auto px-4 py-12 md:py-20 max-w-6xl">
       <header className="mb-16 border-b border-zinc-200 pb-10">
-        <h1 className="text-4xl font-black uppercase mb-6">О KINK</h1>
+        <h1 className="text-4xl font-black uppercase mb-6">{t.about}</h1>
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
           <p className="text-zinc-500 text-lg md:text-xl max-w-xl leading-snug">
             Мы объединяем наследие спортивных гигантов и дерзость современных

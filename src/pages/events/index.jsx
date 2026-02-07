@@ -1,6 +1,10 @@
+import { translations } from "@/i18n/translations";
+import { useLanguageStore } from "@/store/languageStore";
 import React from "react";
 
 export default function EventsPage() {
+  const language = useLanguageStore((state) => state.language);
+  const t = translations[language];
   const events = [
     {
       id: 1,
@@ -26,7 +30,7 @@ export default function EventsPage() {
 
   return (
     <div className="container mx-auto px-4 py-12 max-w-7xl">
-      <h2 className="text-4xl font-black uppercase mb-6">События</h2>
+      <h2 className="text-4xl font-black uppercase mb-6">{t.events}</h2>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {events.map((event) => (

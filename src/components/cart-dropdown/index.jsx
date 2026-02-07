@@ -6,16 +6,23 @@ export const CartDropdown = ({
   favoritesCount,
   navigate,
   onClose,
+  cartEmpty,
+  saved,
+  orders,
 }) => (
   <div className="absolute right-0 top-full mt-3 bg-white shadow-lg border w-72 z-50 p-3 flex flex-col gap-3">
     {items.length === 0 ? (
-      <p className="text-center text-gray-400 py-2">Корзина пуста</p>
+      <p className="text-center text-gray-400 py-2">{cartEmpty}</p>
     ) : (
       <>
         {items.slice(0, 3).map((item) => (
           <div key={item.id} className="flex items-center gap-3 border-b pb-4">
             <img
-              src={item.product.images?.find((img) => img.is_main)?.image || item.product.images?.[0]?.image || "/placeholder.png"}
+              src={
+                item.product.images?.find((img) => img.is_main)?.image ||
+                item.product.images?.[0]?.image ||
+                "/placeholder.png"
+              }
               alt={item.product.name}
               className="w-16 h-16 object-contain"
             />
@@ -52,7 +59,7 @@ export const CartDropdown = ({
       >
         <img className="w-6 h-6" src="/icons/save2.svg" alt="save" />
         <span className="text-sm underline">
-          Сохраненные ({favoritesCount})
+          {saved} ({favoritesCount})
         </span>
       </div>
 
@@ -64,7 +71,7 @@ export const CartDropdown = ({
         className="flex items-center gap-3 cursor-pointer hover:opacity-70 transition"
       >
         <img className="w-6 h-6" src="/icons/box.svg" alt="orders" />
-        <span className="text-sm underline">Заказы</span>
+        <span className="text-sm underline">{orders}</span>
       </div>
     </div>
 

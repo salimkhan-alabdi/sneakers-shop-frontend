@@ -4,6 +4,8 @@ import CategoriesList from "@/features/category-list/index.jsx";
 import HeroSlider from "@/features/hero-slider";
 import { useFavoritesStore } from "@/store/favoritesStore.js";
 import { useEffect } from "react";
+import { useLanguageStore } from "@/store/languageStore.js";
+import { translations } from "@/i18n/translations";
 
 const events = [
   {
@@ -29,6 +31,9 @@ const events = [
 ];
 
 export default function Home() {
+  const language = useLanguageStore((state) => state.language);
+  const t = translations[language];
+
   useEffect(() => {
     useFavoritesStore.getState().loadFavorites();
   }, []);
@@ -40,7 +45,7 @@ export default function Home() {
       <CategoriesList />
       <PopularSection />
       <div className="container mx-auto px-4 py-12 max-w-7xl">
-        <h2 className="mb-6">События</h2>
+        <h2 className="mb-6">{t.events}</h2>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {events.map((event) => (

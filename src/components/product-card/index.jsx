@@ -23,11 +23,11 @@ export default function ProductCard({ product }) {
             />
           </div>
 
-          <span className="text-xs text-gray-400 tracking-wide">
+          <span className="text-xs font-semibold text-gray-400 tracking-wide">
             {product.brand?.name}
           </span>
 
-          <h3 className="text-sm font-medium text-gray-900 leading-tight mt-1 mb-2 line-clamp-2 min-h-[2.5em]">
+          <h3 className="text-sm font-semibold text-gray-900 leading-tight mt-1 mb-2 line-clamp-2 min-h-[2.5em]">
             {product.name}
           </h3>
 
@@ -52,7 +52,7 @@ export default function ProductCard({ product }) {
           <div className="mt-auto flex flex-col sm:flex-row justify-between items-end border-t pt-2 border-dashed border-gray-100">
             <span className="text-lg font-bold text-gray-900">
               {Math.floor(product.price).toLocaleString()}{" "}
-              <span className="text-xs font-normal text-gray-500">
+              <span className="text-xs font-semibold text-gray-500">
                 {translations[language]?.currency}
               </span>
             </span>

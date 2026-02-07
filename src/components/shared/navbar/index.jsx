@@ -19,7 +19,8 @@ export default function Navbar() {
   const { items, fetchCart } = useCartStore();
   const { language, setLanguage } = useLanguageStore();
   const { favorites, loadFavorites } = useFavoritesStore();
-
+  const languages = useLanguageStore((state) => state.language);
+  const t = translations[languages];
   const [openMenu, setOpenMenu] = useState(null);
   const [brands, setBrands] = useState([]);
 
@@ -157,7 +158,8 @@ export default function Navbar() {
             src="/icons/user.svg"
             alt="user"
             isLink
-            to={`/${language}/login`}
+            to={token ? `/${language}/profile` : `/${language}/login`}
+            onClick={() => setOpenMenu(null)}
           />
         </div>
 
@@ -171,6 +173,9 @@ export default function Navbar() {
           <CartDropdown
             items={items}
             language={language}
+            cartEmpty={t.cartEmpty}
+            saved={t.saved}
+            orders={t.orders}
             favoritesCount={favoritesCount}
             navigate={navigate}
             onClose={() => setOpenMenu(null)}

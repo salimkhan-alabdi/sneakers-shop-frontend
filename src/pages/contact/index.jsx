@@ -6,8 +6,12 @@ import {
   Navigation,
   ExternalLink,
 } from "lucide-react";
+import { useLanguageStore } from "@/store/languageStore";
+import { translations } from "@/i18n/translations";
 
 export default function ContactPage() {
+  const language = useLanguageStore((state) => state.language);
+  const t = translations[language];
   const [isMapLoaded, setIsMapLoaded] = useState(false);
 
   const ADDRESS = "Ташкент, ул. Паркентская, 283";
@@ -21,7 +25,7 @@ export default function ContactPage() {
   return (
     <div className="container mx-auto px-4 py-12 max-w-6xl">
       <header className="mb-16 border-b border-zinc-200 pb-10">
-        <h1 className="text-4xl font-black uppercase mb-6">Контакты</h1>
+        <h1 className="text-4xl font-black uppercase mb-6">{t.contact}</h1>
         <p className="text-zinc-500 mt-4 text-lg font-medium">
           Главный штаб кроссовок в Ташкенте.
         </p>

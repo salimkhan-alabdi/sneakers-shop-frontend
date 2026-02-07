@@ -1,12 +1,15 @@
 import React from "react";
 import { Truck, Package, Store, Info } from "lucide-react";
+import { useLanguageStore } from "@/store/languageStore";
+import { translations } from "@/i18n/translations";
 export default function DeliveryPage() {
+  const language = useLanguageStore((state) => state.language);
+  const t = translations[language];
+
   return (
     <div className="container mx-auto px-4 py-12 max-w-5xl">
       <header className="mb-16">
-        <h1 className="text-4xl font-black uppercase mb-6">
-          Доставка и получение
-        </h1>
+        <h1 className="text-4xl font-black uppercase mb-6">{t.delivery}</h1>
         <p className="text-zinc-500 text-lg max-w-2xl">
           KINK.UZ объединяет лучшие магазины Ташкента на одной платформе. Мы
           сделали процесс шоппинга быстрым, прозрачным и мобильным.

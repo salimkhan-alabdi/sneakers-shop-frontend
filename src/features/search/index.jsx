@@ -1,8 +1,12 @@
 import { useEffect, useRef, useState } from "react";
 import { api } from "@/api";
 import { Link } from "react-router-dom";
+import { useLanguageStore } from "@/store/languageStore";
+import { translations } from "@/i18n/translations";
 
 export default function SearchProducts({ onClose }) {
+  const language = useLanguageStore((state) => state.language);
+  const t = translations[language];
   const [query, setQuery] = useState("");
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -41,7 +45,7 @@ export default function SearchProducts({ onClose }) {
       <input
         ref={inputRef}
         type="text"
-        placeholder="Поиск..."
+        placeholder={t.searchPlaceholder}
         value={query}
         onChange={(e) => setQuery(e.target.value)}
         className="border-2 p-2 w-full outline-none bg-white"

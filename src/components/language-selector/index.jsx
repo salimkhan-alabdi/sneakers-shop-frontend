@@ -29,7 +29,7 @@ export const LanguageSelector = ({
           <button
             key={lang}
             onClick={() => onSelect(lang)}
-            className="flex items-center gap-2 w-full px-3 py-2 text-left border-b last:border-b-0 hover:bg-gray-50 uppercase text-sm cursor-pointer"
+            className="flex items-center gap-2 w-full px-3 py-2 text-left border-b last:border-b-0 hover:bg-gray-50 uppercase font-bold text-sm cursor-pointer"
           >
             {lang}
           </button>

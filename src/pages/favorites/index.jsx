@@ -10,10 +10,6 @@ export default function FavoritesPage() {
   const language = useLanguageStore((state) => state.language)
   const { favorites, loadFavorites, toggleFavorite } = useFavoritesStore()
   const [loadingFavorites, setLoadingFavorites] = useState(true)
-  console.log(
-    'favo:',
-    favorites.map((fav) => fav.product)
-  )
 
   useEffect(() => {
     const fetchFavorites = async () => {

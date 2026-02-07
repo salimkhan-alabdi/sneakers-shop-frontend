@@ -12,7 +12,7 @@ export const BrandsDropdown = ({ isOpen, brands, language }) => (
           <Link
             key={brand.id}
             to={`/${language}/brand/${brand.slug}`}
-            className="hover:text-gray-600 text-sm font-medium"
+            className="hover:text-gray-600 text-sm font-semibold"
           >
             {brand.name}
           </Link>
