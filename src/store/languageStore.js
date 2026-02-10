@@ -30,7 +30,7 @@ export const useLanguageStore = create((set, get) => ({
         set({ language, availableLanguages: available_languages })
         localStorage.setItem(LS_KEY, language)
       }
-    } catch (err) {
+    } catch {
       console.log('Бэкенд недоступен, работаем на локальных данных')
     }
   },

@@ -41,37 +41,37 @@ export default function OrderList() {
     fetchOrders()
   }, [])
 
-  if (loading) return <div className='p-10 text-center'>Загрузка заказов…</div>
+  if (loading) return <div className="p-10 text-center">Загрузка заказов…</div>
 
   if (orders.length === 0)
-    return <div className='p-10 text-center text-gray-500'>Заказов нет</div>
+    return <div className="p-10 text-center text-gray-500">Заказов нет</div>
 
   return (
-    <div className='max-w-4xl mx-auto p-6 space-y-4'>
-      <h1 className='text-2xl font-bold mb-4'>Мои заказы</h1>
+    <div className="mx-auto max-w-4xl space-y-4 p-6">
+      <h1 className="mb-4 text-2xl font-bold">Мои заказы</h1>
 
       {orders.map((order) => (
         <div
           key={order.id}
-          className='border p-4 rounded-lg flex justify-between items-center'
+          className="flex items-center justify-between rounded-lg border p-4"
         >
-          <div className='flex flex-col'>
-            <span className='font-semibold'>Заказ #{order.id}</span>
-            <span className='text-sm text-gray-500'>
+          <div className="flex flex-col">
+            <span className="font-semibold">Заказ #{order.id}</span>
+            <span className="text-sm text-gray-500">
               Статус: {order.status}
             </span>
-            <span className='text-sm text-gray-500'>
+            <span className="text-sm text-gray-500">
               Итого: {order.total_price} сум
             </span>
-            <span className='text-sm text-gray-400'>
+            <span className="text-sm text-gray-400">
               {new Date(order.created_at).toLocaleDateString()}
             </span>
           </div>
 
-          <div className='flex gap-2'>
+          <div className="flex gap-2">
             <Button
               onClick={() => navigate(`/${lang}/orders/${order.id}`)}
-              className='px-3 py-1 bg-gray-200 text-black'
+              className="bg-gray-200 px-3 py-1 text-black"
             >
               Подробнее
             </Button>
@@ -79,7 +79,7 @@ export default function OrderList() {
             {order.status === 'pending' && (
               <Button
                 onClick={() => cancelOrder(order.id)}
-                className='px-3 py-1 text-white'
+                className="px-3 py-1 text-white"
               >
                 Отменить
               </Button>

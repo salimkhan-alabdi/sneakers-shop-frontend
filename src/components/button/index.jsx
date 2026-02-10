@@ -1,8 +1,14 @@
-const Button = ({ children, onClick }) => {
+import { cn } from '@/utils/cn'
+
+const Button = ({ children, onClick, className, ...props }) => {
   return (
     <button
       onClick={onClick}
-      className='bg-black text-md text-white w-full py-3 border-2 border-black hover:bg-black/90 active:bg-white active:text-black cursor-pointer'
+      className={cn(
+        'text-md w-full cursor-pointer border-2 border-black bg-black py-3 text-white hover:bg-black/90 active:bg-white active:text-black',
+        className
+      )}
+      {...props}
     >
       {children}
     </button>

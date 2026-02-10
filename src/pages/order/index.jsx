@@ -1,49 +1,45 @@
-import { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
-import { useCartStore } from "@/store/cartStore.js";
-import { instance } from "@/api/axios.js";
-import Button from "@/components/button/index.jsx";
+import { useState } from 'react'
+import { useNavigate, useParams } from 'react-router-dom'
+import { useCart } from '@/hooks/useCart'
+import { instance } from '@/api/axios.js'
+import Button from '@/components/button/index.jsx'
 
 export default function OrderPage() {
-  const { items, fetchCart, clearCart } = useCartStore();
-  const navigate = useNavigate();
-  const { lang } = useParams();
+  const { cartItems: items, clearCart } = useCart()
+  const navigate = useNavigate()
+  const { lang } = useParams()
 
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(false)
 
   const [form, setForm] = useState({
-    full_name: "",
-    phone: "",
-    address: "",
-    city: "",
-    region: "",
-    postal_code: "",
-    payment_method: "cash",
-    note: "",
-  });
+    full_name: '',
+    phone: '',
+    address: '',
+    city: '',
+    region: '',
+    postal_code: '',
+    payment_method: 'cash',
+    note: '',
+  })
 
-  const DELIVERY_PRICE = 25000;
-
-  useEffect(() => {
-    fetchCart();
-  }, []);
+  const DELIVERY_PRICE = 25000
 
   const subtotal = items.reduce(
     (sum, item) => sum + parseFloat(item.product.price) * item.quantity,
     0
-  );
+  )
 
-  const totalPrice = subtotal + DELIVERY_PRICE;
+  const totalPrice = subtotal + DELIVERY_PRICE
 
   const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
-  };
+    setForm({ ...form, [e.target.name]: e.target.value })
+  }
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    if (items.length === 0) return alert("Корзина пуста");
+    e.preventDefault()
+    if (items.length === 0) return alert('Корзина пуста')
 
-    setLoading(true);
+    setLoading(true)
 
     try {
       const payload = {
@@ -52,33 +48,33 @@ export default function OrderPage() {
         items: items.map((item) => ({
           product_id: item.product.id,
           size:
-            typeof item.size === "object"
+            typeof item.size === 'object'
               ? item.size.size || item.size.id
               : item.size,
           quantity: item.quantity,
         })),
-      };
+      }
 
-      const { data } = await instance.post("/orders/create/", payload);
-      console.log("Ответ сервера при создании заказа:", data);
+      const { data } = await instance.post('/orders/create/', payload)
+      console.log('Ответ сервера при создании заказа:', data)
 
-      clearCart();
-      navigate(`/${lang}/orders/${data.order.id}`);
+      clearCart()
+      navigate(`/${lang}/orders/${data.order.id}`)
     } catch (err) {
-      console.error(err);
-      alert("Ошибка при оформлении заказа");
+      console.error(err)
+      alert('Ошибка при оформлении заказа')
     } finally {
-      setLoading(false);
+      setLoading(false)
     }
-  };
+  }
 
   return (
-    <div className="max-w-4xl mx-auto p-6">
-      <h1 className="text-2xl font-bold mb-6">Оформление заказа</h1>
+    <div className="mx-auto max-w-4xl p-6">
+      <h1 className="mb-6 text-2xl font-bold">Оформление заказа</h1>
 
       <form onSubmit={handleSubmit} className="space-y-6">
         {/* CONTACT */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
           <input
             name="full_name"
             placeholder="ФИО"
@@ -99,12 +95,12 @@ export default function OrderPage() {
         <input
           name="address"
           placeholder="Адрес"
-          className="border p-3 w-full"
+          className="w-full border p-3"
           required
           onChange={handleChange}
         />
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
           <input
             name="city"
             placeholder="Город"
@@ -129,10 +125,10 @@ export default function OrderPage() {
 
         {/* PAYMENT */}
         <div>
-          <p className="font-semibold mb-2">Способ оплаты</p>
+          <p className="mb-2 font-semibold">Способ оплаты</p>
           <select
             name="payment_method"
-            className="border p-3 w-full"
+            className="w-full border p-3"
             onChange={handleChange}
           >
             <option value="cash">Наличными при получении</option>
@@ -144,7 +140,7 @@ export default function OrderPage() {
         <textarea
           name="note"
           placeholder="Комментарий к заказу"
-          className="border p-3 w-full"
+          className="w-full border p-3"
           rows={3}
           onChange={handleChange}
         />
@@ -156,12 +152,12 @@ export default function OrderPage() {
             const mainImage =
               item.product.images.find((img) => img.is_main)?.image ||
               item.product.images[0]?.image ||
-              "/placeholder.png";
+              '/placeholder.png'
 
             const sizeLabel =
-              typeof item.size === "object"
+              typeof item.size === 'object'
                 ? item.size.size || item.size.id
-                : item.size;
+                : item.size
 
             return (
               <div
@@ -172,7 +168,7 @@ export default function OrderPage() {
                   <img
                     src={mainImage}
                     alt={item.product.name}
-                    className="w-16 h-16 object-contain"
+                    className="h-16 w-16 object-contain"
                   />
 
                   <div>
@@ -190,12 +186,12 @@ export default function OrderPage() {
 
                 <div className="text-sm font-semibold">× {item.quantity}</div>
               </div>
-            );
+            )
           })}
         </div>
 
         {/* SUMMARY */}
-        <div className="border-t pt-4 space-y-2">
+        <div className="space-y-2 border-t pt-4">
           <div className="flex justify-between">
             <span>Товары</span>
             <span>{subtotal} сум</span>
@@ -204,16 +200,16 @@ export default function OrderPage() {
             <span>Доставка</span>
             <span>{DELIVERY_PRICE} сум</span>
           </div>
-          <div className="flex justify-between font-bold text-lg">
+          <div className="flex justify-between text-lg font-bold">
             <span>Итого</span>
             <span>{totalPrice} сум</span>
           </div>
         </div>
 
-        <Button disabled={loading} className="w-full py-3 bg-black text-white">
-          {loading ? "Оформляем..." : "Подтвердить заказ"}
+        <Button disabled={loading} className="w-full bg-black py-3 text-white">
+          {loading ? 'Оформляем...' : 'Подтвердить заказ'}
         </Button>
       </form>
     </div>
-  );
+  )
 }

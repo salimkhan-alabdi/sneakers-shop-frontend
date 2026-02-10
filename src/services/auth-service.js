@@ -7,7 +7,7 @@ export const authService = {
   logout: async () => {
     return ''
   },
-  register: async () => {
+  register: async (data) => {
     return instance.post('/', data)
   },
   getProfile: async () => {

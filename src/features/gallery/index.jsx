@@ -1,51 +1,47 @@
 import React, { useEffect, useState } from 'react'
 
 export default function ProductGallery({ images, onClose }) {
-  const [activeImage, setActiveImage] = useState(null)
+  const [activeImage, setActiveImage] = useState(() => images?.[0] || null)
 
-  // Когда галерея открывается — ставим 1-й
+  // Update active image when images prop changes
   useEffect(() => {
-    if (images?.length > 0) {
+    if (images?.length > 0 && !activeImage) {
       setActiveImage(images[0])
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [images])
 
   if (!activeImage) return null
 
   return (
-    <div className='fixed bg-white top-0 left-0 w-full h-full z-10'>
+    <div className="fixed top-0 left-0 z-10 h-full w-full bg-white">
       <button
-        className='absolute top-10 right-10 cursor-pointer text-2xl'
+        className="absolute top-10 right-10 cursor-pointer text-2xl"
         onClick={onClose}
       >
         ✖
       </button>
 
       {/* Главное изображение */}
-      <div className='flex gap-2 justify-center items-center h-[70vh]'>
+      <div className="flex h-[70vh] items-center justify-center gap-2">
         <img
-          className='max-w-full max-h-full object-contain w-[600px]'
+          className="max-h-full w-[600px] max-w-full object-contain"
           src={activeImage.image}
-          alt=''
+          alt={activeImage.image}
         />
       </div>
 
       {/* Миниатюры */}
-      <div className='flex gap-3 justify-center transition-all'>
+      <div className="flex justify-center gap-3 transition-all">
         {images.map((image, i) => (
           <img
             key={i}
             src={image.image}
-            className={`
-              w-32 h-32 object-contain border 
-              cursor-pointer 
-              ${
-                activeImage.image === image.image
-                  ? 'border-black'
-                  : 'border-transparent'
-              }
-            `}
-            onClick={() => setActiveImage(image)} // ← Теперь правильно
+            className={`h-32 w-32 cursor-pointer border object-contain ${activeImage.image === image.image
+              ? 'border-black'
+              : 'border-transparent'
+              } `}
+            onClick={() => setActiveImage(image)}
           />
         ))}
       </div>

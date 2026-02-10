@@ -38,20 +38,20 @@ export default function RegisterPage() {
   }
 
   return (
-    <div className='min-h-screen flex items-center justify-center bg-gray-50 px-4'>
-      <div className='w-full max-w-sm bg-white p-6 border'>
-        <h2 className='text-2xl font-bold text-gray-900 text-center mb-6'>
+    <div className="flex min-h-screen items-center justify-center bg-gray-50 px-4">
+      <div className="w-full max-w-sm border bg-white p-6">
+        <h2 className="mb-6 text-center text-2xl font-bold text-gray-900">
           Регистрация
         </h2>
 
-        <form onSubmit={handleSubmit} className='space-y-4'>
+        <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className='block text-sm text-black mb-1'>
+            <label className="mb-1 block text-sm text-black">
               Имя пользователя
             </label>
             <input
-              type='text'
-              className='w-full px-3 py-2 border outline-none'
+              type="text"
+              className="w-full border px-3 py-2 outline-none"
               value={username}
               onChange={(e) => setUserName(e.target.value)}
               required
@@ -59,10 +59,10 @@ export default function RegisterPage() {
           </div>
 
           <div>
-            <label className='block text-sm text-black mb-1'>Пароль</label>
+            <label className="mb-1 block text-sm text-black">Пароль</label>
             <input
-              type='password'
-              className='w-full px-3 py-2 border outline-none'
+              type="password"
+              className="w-full border px-3 py-2 outline-none"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
@@ -70,12 +70,12 @@ export default function RegisterPage() {
           </div>
 
           <div>
-            <label className='block text-sm text-black mb-1'>
+            <label className="mb-1 block text-sm text-black">
               Повторите пароль
             </label>
             <input
-              type='password'
-              className='w-full px-3 py-2 border outline-none'
+              type="password"
+              className="w-full border px-3 py-2 outline-none"
               value={password2}
               onChange={(e) => setPassword2(e.target.value)}
               required
@@ -87,9 +87,9 @@ export default function RegisterPage() {
           </Button>
         </form>
 
-        <p className='text-center text-sm text-gray-500 mt-4'>
+        <p className="mt-4 text-center text-sm text-gray-500">
           Уже есть аккаунт?{' '}
-          <a href='/login' className='text-black underline'>
+          <a href="/login" className="text-black underline">
             Войти
           </a>
         </p>

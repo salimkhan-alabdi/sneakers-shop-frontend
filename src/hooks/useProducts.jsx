@@ -1,27 +1,19 @@
-import { useState, useEffect } from "react";
-import { api } from "@/api";
+import { useQuery } from '@tanstack/react-query'
+import { api } from '@/api'
 
-export const useProducts = (endpoint = "products/") => {
-  const [data, setData] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState(null);
+export const useProducts = (endpoint = 'products/') => {
+  const {
+    data: products = [],
+    isLoading,
+    error,
+  } = useQuery({
+    queryKey: ['products', endpoint],
+    queryFn: async () => {
+      const { data } = await api.get(endpoint)
+      return data
+    },
+    staleTime: 1000 * 60 * 10, // 10 minutes cache for products
+  })
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        setIsLoading(true);
-        const response = await api.get(endpoint);
-        setData(response.data);
-      } catch (err) {
-        setError(err);
-        console.error(`Ошибка при загрузке ${endpoint}:`, err);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchData();
-  }, [endpoint]);
-
-  return { data, isLoading, error };
-};
+  return { data: products, isLoading, error }
+}

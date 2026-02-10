@@ -34,47 +34,47 @@ export default function LoginPage() {
   }
 
   return (
-    <div className='min-h-screen flex items-center justify-center bg-gray-50 px-4'>
-      <div className='w-full max-w-sm bg-white border p-6'>
-        <h2 className='text-2xl font-bold text-gray-900 text-center mb-6'>
+    <div className="flex min-h-screen items-center justify-center bg-gray-50 px-4">
+      <div className="w-full max-w-sm border bg-white p-6">
+        <h2 className="mb-6 text-center text-2xl font-bold text-gray-900">
           Войти в аккаунт
         </h2>
 
-        <form onSubmit={handleSubmit} className='space-y-4'>
+        <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className='block text-sm text-black mb-1'>
+            <label className="mb-1 block text-sm text-black">
               Имя пользователя
             </label>
             <input
-              type='text'
-              className='w-full px-3 py-2 border outline-none focus:ring-1 transition-all'
+              type="text"
+              className="w-full border px-3 py-2 transition-all outline-none focus:ring-1"
               value={username}
-              placeholder='Ваше имя'
+              placeholder="Ваше имя"
               onChange={(e) => setUsername(e.target.value)}
               required
             />
           </div>
 
           <div>
-            <label className='block text-sm text-black mb-1'>Пароль</label>
+            <label className="mb-1 block text-sm text-black">Пароль</label>
             <input
-              type='password'
-              className='w-full px-3 py-2 border outline-none focus:ring-1 transition-all'
+              type="password"
+              className="w-full border px-3 py-2 transition-all outline-none focus:ring-1"
               value={password}
-              placeholder='••••••••'
+              placeholder="••••••••"
               onChange={(e) => setPassword(e.target.value)}
               required
             />
           </div>
 
-          <Button disabled={loading} className='w-full'>
+          <Button disabled={loading} className="w-full">
             {loading ? 'Вход...' : 'Войти'}
           </Button>
         </form>
 
-        <p className='text-center text-sm text-gray-500 mt-4'>
+        <p className="mt-4 text-center text-sm text-gray-500">
           Нет аккаунта?{' '}
-          <a href='/register' className='text-black underline'>
+          <a href="/register" className="text-black underline">
             Регистрация
           </a>
         </p>

@@ -52,25 +52,25 @@ export default function ProfilePage() {
   }
 
   return (
-    <div className='max-w-md mx-auto mt-10 p-6 border rounded shadow'>
-      <h1 className='text-2xl font-bold mb-4'>Профиль</h1>
+    <div className="mx-auto mt-10 max-w-md rounded border p-6 shadow">
+      <h1 className="mb-4 text-2xl font-bold">Профиль</h1>
 
-      {error && <p className='text-red-500 mb-2'>{error}</p>}
+      {error && <p className="mb-2 text-red-500">{error}</p>}
 
-      <div className='mb-4'>
-        <label className='block text-sm font-semibold mb-1'>Имя</label>
+      <div className="mb-4">
+        <label className="mb-1 block text-sm font-semibold">Имя</label>
         <input
-          type='text'
-          className='w-full border px-3 py-2 rounded'
+          type="text"
+          className="w-full rounded border px-3 py-2"
           value={username}
           onChange={(e) => setUsername(e.target.value)}
         />
       </div>
 
-      <div className='flex gap-3'>
+      <div className="flex gap-3">
         <Button
           onClick={handleSave}
-          className='bg-blue-600 text-white px-4 py-2 rounded'
+          className="rounded bg-blue-600 px-4 py-2 text-white"
           disabled={loading}
         >
           {loading ? 'Сохраняем...' : 'Сохранить'}
@@ -78,7 +78,7 @@ export default function ProfilePage() {
 
         <Button
           onClick={handleLogout}
-          className='bg-red-500 text-white px-4 py-2 rounded'
+          className="rounded bg-red-500 px-4 py-2 text-white"
         >
           Выйти
         </Button>

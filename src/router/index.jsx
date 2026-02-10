@@ -1,104 +1,77 @@
 import { createBrowserRouter, Navigate } from 'react-router-dom'
+import { lazy, Suspense } from 'react'
 import MainLayout from '@/layouts/main-layout'
-import Home from '@/pages/home'
-import About from '@/pages/about'
-import Contact from '@/pages/contact'
-import MensPage from '@/pages/mens'
-import WomensPage from '@/pages/womens'
-import ProductPage from '@/pages/product'
-import EventsPage from '@/pages/events'
-import DeliveryPage from '@/pages/delivery'
-import NewArrival from '@/pages/new-arrival'
-import CategoryPage from '@/pages/category'
-import LoginPage from '@/pages/login'
-import RegisterPage from '@/pages/register'
-import ProfilePage from '@/pages/profile/index.jsx'
-import NotFoundPage from '@/pages/notfound'
 import { ProtectedRoutes } from '@/components/auth/protectedRoutes.jsx'
-import CartPage from '@/pages/cart/index.jsx'
-import FavoritesPage from '@/pages/favorites/index.jsx'
-import Order from '@/pages/order/index.jsx'
-import OrderPage from '@/pages/order/index.jsx'
-import BrandsPage from '@/pages/brands/index.jsx'
-import OrderList from '@/pages/orders/index.jsx'
-import OrderDetails from '@/pages/order-details/index.jsx'
+import Loader from '@/components/loader'
 
-// router.jsx (ИСПРАВЛЕНО - ПУБЛИЧНЫЙ БЛОК)
+// Lazy load pages
+const Home = lazy(() => import('@/pages/home'))
+const About = lazy(() => import('@/pages/about'))
+const Contact = lazy(() => import('@/pages/contact'))
+const MensPage = lazy(() => import('@/pages/mens'))
+const WomensPage = lazy(() => import('@/pages/womens'))
+const ProductPage = lazy(() => import('@/pages/product'))
+const EventsPage = lazy(() => import('@/pages/events'))
+const DeliveryPage = lazy(() => import('@/pages/delivery'))
+const NewArrival = lazy(() => import('@/pages/new-arrival'))
+const CategoryPage = lazy(() => import('@/pages/category'))
+const LoginPage = lazy(() => import('@/pages/login'))
+const RegisterPage = lazy(() => import('@/pages/register'))
+const ProfilePage = lazy(() => import('@/pages/profile/index.jsx'))
+const NotFoundPage = lazy(() => import('@/pages/notfound'))
+const CartPage = lazy(() => import('@/pages/cart/index.jsx'))
+const FavoritesPage = lazy(() => import('@/pages/favorites/index.jsx'))
+const OrderPage = lazy(() => import('@/pages/order/index.jsx'))
+const BrandsPage = lazy(() => import('@/pages/brands/index.jsx'))
+const OrderList = lazy(() => import('@/pages/orders/index.jsx'))
+const OrderDetails = lazy(() => import('@/pages/order-details/index.jsx'))
+
+// eslint-disable-next-line no-unused-vars
+const withSuspense = (WrappedComponent) => (
+  <Suspense fallback={<Loader />}>
+    <WrappedComponent />
+  </Suspense>
+)
+
 const router = createBrowserRouter([
   {
     path: '/:lang',
     element: <MainLayout />,
     children: [
-      { index: true, element: <Home /> },
-      { path: 'about', element: <About /> },
-      { path: 'contact', element: <Contact /> },
-      { path: 'mens', element: <MensPage /> },
-      { path: 'womens', element: <WomensPage /> },
-      { path: 'product', element: <ProductPage /> },
-      { path: 'product/:slug', element: <ProductPage /> },
-      { path: 'events', element: <EventsPage /> },
-      { path: 'delivery', element: <DeliveryPage /> },
-      { path: 'new-arrival', element: <NewArrival /> },
-      { path: 'category/:slug', element: <CategoryPage /> },
-      { path: 'brand/:slug', element: <BrandsPage /> },
+      { index: true, element: withSuspense(Home) },
+      { path: 'about', element: withSuspense(About) },
+      { path: 'contact', element: withSuspense(Contact) },
+      { path: 'mens', element: withSuspense(MensPage) },
+      { path: 'womens', element: withSuspense(WomensPage) },
+      { path: 'product', element: withSuspense(ProductPage) },
+      { path: 'product/:slug', element: withSuspense(ProductPage) },
+      { path: 'events', element: withSuspense(EventsPage) },
+      { path: 'delivery', element: withSuspense(DeliveryPage) },
+      { path: 'new-arrival', element: withSuspense(NewArrival) },
+      { path: 'category/:slug', element: withSuspense(CategoryPage) },
+      { path: 'brand/:slug', element: withSuspense(BrandsPage) },
       {
-        element: <ProtectedRoutes />, // <-- ProtectedRoutes теперь просто обертка
+        element: <ProtectedRoutes />,
         children: [
-          // Теперь это просто страницы, которые будут вставлены в Outlet родителя
-          { path: 'profile', element: <ProfilePage /> },
-          { path: 'cart', element: <CartPage /> },
-          { path: 'favorites', element: <FavoritesPage /> },
-          { path: 'order', element: <OrderPage /> },
-          { path: 'orders', element: <OrderList /> },
-          { path: 'orders/:id', element: <OrderDetails /> },
+          { path: 'profile', element: withSuspense(ProfilePage) },
+          { path: 'cart', element: withSuspense(CartPage) },
+          { path: 'favorites', element: withSuspense(FavoritesPage) },
+          { path: 'order', element: withSuspense(OrderPage) },
+          { path: 'orders', element: withSuspense(OrderList) },
+          { path: 'orders/:id', element: withSuspense(OrderDetails) },
         ],
       },
-
-      // Обратите внимание, что NotFoundPage теперь тоже в MainLayout
-      { path: '*', element: <NotFoundPage /> },
+      { path: '*', element: withSuspense(NotFoundPage) },
     ],
   },
-
-  // 1.2. Добавьте роуты авторизации БЕЗ MainLayout
   {
     path: '/:lang',
     children: [
-      { path: 'login', element: <LoginPage /> },
-      { path: 'register', element: <RegisterPage /> },
+      { path: 'login', element: withSuspense(LoginPage) },
+      { path: 'register', element: withSuspense(RegisterPage) },
     ],
   },
-
-  // 1.3. Исправьте защищенные роуты, используя Outlet
-  {
-    path: '/:lang',
-    element: <ProtectedRoutes />, // ProtectedRoutes отвечает за проверку
-    children: [
-      // Все защищенные страницы используют MainLayout, чтобы иметь Navbar/Footer
-      {
-        path: 'profile',
-        element: <MainLayout></MainLayout>,
-      },
-      {
-        path: 'cart',
-        element: (
-          <MainLayout>
-            <CartPage />
-          </MainLayout>
-        ),
-      },
-      {
-        path: 'favorites',
-        element: (
-          <MainLayout>
-            <FavoritesPage />
-          </MainLayout>
-        ),
-      },
-    ],
-  },
-
-  // 1.4. Финальный редирект (оставляем)
-  { path: '*', element: <Navigate to='/ru' replace /> },
+  { path: '*', element: <Navigate to="/ru" replace /> },
 ])
 
 export default router

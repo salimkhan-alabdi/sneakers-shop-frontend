@@ -1,44 +1,51 @@
-import { useEffect, useRef, useState } from "react";
-import { api } from "@/api";
-import { Link } from "react-router-dom";
-import { useLanguageStore } from "@/store/languageStore";
-import { translations } from "@/i18n/translations";
+import { useEffect, useRef, useState, useMemo } from 'react'
+import { debounce } from 'lodash'
+import { api } from '@/api'
+import { Link } from 'react-router-dom'
+import { useLanguageStore } from '@/store/languageStore'
+import { translations } from '@/i18n/translations'
 
 export default function SearchProducts({ onClose }) {
-  const language = useLanguageStore((state) => state.language);
-  const t = translations[language];
-  const [query, setQuery] = useState("");
-  const [products, setProducts] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const inputRef = useRef(null);
+  const language = useLanguageStore((state) => state.language)
+  const t = translations[language]
+  const [query, setQuery] = useState('')
+  const [products, setProducts] = useState([])
+  const [loading, setLoading] = useState(false)
+  const inputRef = useRef(null)
 
   useEffect(() => {
-    inputRef.current?.focus();
-  }, []);
+    inputRef.current?.focus()
+  }, [])
+
+  // Debounced search function
+  const debouncedSearch = useMemo(
+    () =>
+      debounce(async (searchQuery) => {
+        if (!searchQuery.trim()) {
+          setProducts([])
+          setLoading(false)
+          return
+        }
+
+        try {
+          setLoading(true)
+          const res = await api.get(
+            `/products/?search=${encodeURIComponent(searchQuery.trim().toLowerCase())}`
+          )
+          setProducts(res.data)
+        } catch (e) {
+          console.error(e)
+        } finally {
+          setLoading(false)
+        }
+      }, 400),
+    []
+  )
 
   useEffect(() => {
-    if (!query.trim()) {
-      setProducts([]);
-      setLoading(false);
-      return;
-    }
-
-    const timeout = setTimeout(async () => {
-      try {
-        setLoading(true);
-        const res = await api.get(
-          `/products/?search=${encodeURIComponent(query.trim().toLowerCase())}`,
-        );
-        setProducts(res.data);
-      } catch (e) {
-        console.error(e);
-      } finally {
-        setLoading(false);
-      }
-    }, 400);
-
-    return () => clearTimeout(timeout);
-  }, [query]);
+    debouncedSearch(query)
+    return () => debouncedSearch.cancel()
+  }, [query, debouncedSearch])
 
   return (
     <div className="w-72 sm:w-96">
@@ -48,13 +55,13 @@ export default function SearchProducts({ onClose }) {
         placeholder={t.searchPlaceholder}
         value={query}
         onChange={(e) => setQuery(e.target.value)}
-        className="border-2 p-2 w-full outline-none bg-white"
+        className="w-full border-2 bg-white p-2 outline-none"
       />
 
-      {loading && <p className="text-sm p-2">Загрузка...</p>}
+      {loading && <p className="p-2 text-sm">Загрузка...</p>}
 
       {!loading && products.length > 0 && (
-        <div className="border-2 border-t-0 bg-white max-h-72 overflow-y-auto px-2">
+        <div className="max-h-72 overflow-y-auto border-2 border-t-0 bg-white px-2">
           {products.map((product) => (
             <Link
               key={product.id}
@@ -68,11 +75,11 @@ export default function SearchProducts({ onClose }) {
         </div>
       )}
 
-      {!loading && query.trim() !== "" && products.length === 0 && (
-        <p className="text-md text-gray-400 border-black border-2 border-t-0 h-72 bg-white flex justify-center items-center">
+      {!loading && query.trim() !== '' && products.length === 0 && (
+        <p className="text-md flex h-72 items-center justify-center border-2 border-t-0 border-black bg-white text-gray-400">
           Ничего не найдено
         </p>
       )}
     </div>
-  );
+  )
 }

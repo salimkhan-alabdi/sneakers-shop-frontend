@@ -45,7 +45,7 @@ export const useAuthStore = create((set) => ({
     try {
       const user = await authService.getProfile()
       set({ user: user, isAuthenticated: true })
-    } catch (error) {
+    } catch {
       // !!! УДАЛЯЕМ ОЧИСТКУ !!!
       // Интерцептор обработает эту 401 ошибку, очистит токены
       // и выполнит редирект, если это необходимо.
